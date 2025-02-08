@@ -23,19 +23,18 @@ board = [
 ]
 
 
-def evaluate(state):
+def evaluate(state, depth):
     """
     Function to heuristic evaluation of state.
     :param state: the state of the current board
     :return: +1 if the computer wins; -1 if the human wins; 0 draw
     """
     if wins(state, COMP):
-        score = +1
+        score = +10 - (9-depth)
     elif wins(state, HUMAN):
-        score = -1
+        score = -10 + (9 - depth)
     else:
         score = 0
-
     return score
 
 
@@ -132,7 +131,7 @@ def minimax(state, depth, player):
         best = [-1, -1, +infinity]
 
     if depth == 0 or game_over(state):
-        score = evaluate(state)
+        score = evaluate(state,depth)
         return [-1, -1, score]
 
     for cell in empty_cells(state):
@@ -149,8 +148,9 @@ def minimax(state, depth, player):
             if score[2] < best[2]:
                 best = score  # min value
 
+    #print(state)
+    #print(best)
     return best
-
 
 def clean():
     """
@@ -196,7 +196,7 @@ def ai_turn(c_choice, h_choice):
     if depth == 0 or game_over(board):
         return
 
-    clean()
+    #clean()
     print(f'Computer turn [{c_choice}]')
     render(board, c_choice, h_choice)
 
@@ -205,6 +205,7 @@ def ai_turn(c_choice, h_choice):
         y = choice([0, 1, 2])
     else:
         move = minimax(board, depth, COMP)
+        print(move)
         x, y = move[0], move[1]
 
     set_move(x, y, COMP)
@@ -230,7 +231,7 @@ def human_turn(c_choice, h_choice):
         7: [2, 0], 8: [2, 1], 9: [2, 2],
     }
 
-    clean()
+    #clean()
     print(f'Human turn [{h_choice}]')
     render(board, c_choice, h_choice)
 
@@ -310,22 +311,22 @@ def main():
             first = ''
 
         human_turn(c_choice, h_choice)
-        #ai_turn(c_choice, h_choice)
-        random_turn(c_choice, h_choice)
+        ai_turn(c_choice, h_choice)
+        #random_turn(c_choice, h_choice)
 
     # Game over message
     if wins(board, HUMAN):
-        clean()
+        #clean()
         print(f'Human turn [{h_choice}]')
         render(board, c_choice, h_choice)
         print('YOU WIN!')
     elif wins(board, COMP):
-        clean()
+        #clean()
         print(f'Computer turn [{c_choice}]')
         render(board, c_choice, h_choice)
         print('YOU LOSE!')
     else:
-        clean()
+        #clean()
         render(board, c_choice, h_choice)
         print('DRAW!')
 
