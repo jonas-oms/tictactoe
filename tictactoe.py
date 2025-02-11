@@ -23,16 +23,16 @@ board = [
 ]
 
 
-def evaluate(state):
+def evaluate(state, depth):
     """
     Function to heuristic evaluation of state.
     :param state: the state of the current board
     :return: +1 if the computer wins; -1 if the human wins; 0 draw
     """
     if wins(state, COMP):
-        score = +1
+        score = +10 - depth
     elif wins(state, HUMAN):
-        score = -1
+        score = depth - 10
     else:
         score = 0
 
@@ -72,6 +72,14 @@ def game_over(state):
     :return: True if the human or computer wins
     """
     return wins(state, HUMAN) or wins(state, COMP)
+
+def is_game_over(board, moves_left):
+    """
+    This function combines if the game is over because 
+    someone won or if there are no more moves left
+    """
+    return moves_left == 0 or game_over(board)
+
 
 
 def empty_cells(state):
@@ -117,37 +125,43 @@ def set_move(x, y, player):
         return False
 
 
-def minimax(state, depth, player):
+def minimax(state, moves_left, player, alpha=-infinity, beta=+infinity, depth = 0):
     """
     AI function that choice the best move
     :param state: current state of the board
-    :param depth: node index in the tree (0 <= depth <= 9),
+    :param moves_left: node index in the tree (0 <= moves_left <= 9),
     but never nine in this case (see iaturn() function)
     :param player: an human or a computer
     :return: a list with [the best row, best col, best score]
     """
+    depth += 1
     if player == COMP:
         best = [-1, -1, -infinity]
     else:
         best = [-1, -1, +infinity]
 
-    if depth == 0 or game_over(state):
-        score = evaluate(state)
+    if is_game_over(board, moves_left):
+        score = evaluate(state, depth)
         return [-1, -1, score]
 
     for cell in empty_cells(state):
         x, y = cell[0], cell[1]
         state[x][y] = player
-        score = minimax(state, depth - 1, -player)
+        score = minimax(state, moves_left - 1, -player, alpha, beta, depth)
         state[x][y] = 0
         score[0], score[1] = x, y
 
         if player == COMP:
             if score[2] > best[2]:
                 best = score  # max value
+                alpha = max(alpha, best[2])
         else:
             if score[2] < best[2]:
                 best = score  # min value
+                beta = min(beta, best[2])
+        
+        if alpha >= beta:
+            break
 
     return best
 
@@ -186,25 +200,25 @@ def render(state, c_choice, h_choice):
 
 def ai_turn(c_choice, h_choice):
     """
-    It calls the minimax function if the depth < 9,
+    It calls the minimax function if the moves_left < 9,
     else it choices a random coordinate.
     :param c_choice: computer's choice X or O
     :param h_choice: human's choice X or O
     :return:
     """
-    depth = len(empty_cells(board))
-    if depth == 0 or game_over(board):
+    moves_left = len(empty_cells(board))
+    if is_game_over(board, moves_left):
         return
 
     clean()
     print(f'Computer turn [{c_choice}]')
     render(board, c_choice, h_choice)
 
-    if depth == 9:
+    if moves_left == 9:
         x = choice([0, 1, 2])
         y = choice([0, 1, 2])
     else:
-        move = minimax(board, depth, COMP)
+        move = minimax(board, moves_left, COMP)
         x, y = move[0], move[1]
 
     set_move(x, y, COMP)
@@ -218,8 +232,8 @@ def human_turn(c_choice, h_choice):
     :param h_choice: human's choice X or O
     :return:
     """
-    depth = len(empty_cells(board))
-    if depth == 0 or game_over(board):
+    moves_left = len(empty_cells(board))
+    if is_game_over(board, moves_left):
         return
 
     # Dictionary of valid moves
@@ -253,10 +267,9 @@ def random_turn(c_choice, h_choice):
     """
     Generate a random valid move
     """
-    depth = len(empty_cells(board))
-    if depth == 0 or game_over(board):
+    moves_left = len(empty_cells(board))
+    if is_game_over(board, moves_left):
         return
-
     clean()
     print(f'Computer turn [{c_choice}]')
     render(board, c_choice, h_choice)
@@ -273,6 +286,7 @@ def main():
     clean()
     h_choice = ''  # X or O
     c_choice = ''  # X or O
+    game_mode = ''  # AI or Random
     first = ''  # if human is the first
 
     # Human chooses X or O to play
@@ -292,6 +306,17 @@ def main():
     else:
         c_choice = 'X'
 
+    # Ask player whether they want to play against AI or random
+    while game_mode != 'AI' and game_mode != 'RANDOM':
+        try:
+            game_mode = input('Do you want to play against AI or Random? (AI/Random): ').upper()
+            print(game_mode)
+        except (EOFError, KeyboardInterrupt):
+            print('Bye')
+            exit()
+        except (KeyError, ValueError):
+            print('Bad choice')
+
     # Human may starts first
     clean()
     while first != 'Y' and first != 'N':
@@ -306,13 +331,18 @@ def main():
     # Main loop of this game
     while len(empty_cells(board)) > 0 and not game_over(board):
         if first == 'N':
-            ai_turn(c_choice, h_choice)
+            if game_mode == 'AI':
+                ai_turn(c_choice, h_choice)  # AI makes a move
+            elif game_mode == 'RANDOM':
+                random_turn(c_choice, h_choice)  # Random makes a move
             first = ''
 
         human_turn(c_choice, h_choice)
-        #ai_turn(c_choice, h_choice)
-        random_turn(c_choice, h_choice)
-
+        if game_mode == 'AI':
+            ai_turn(c_choice, h_choice)  # AI makes a move
+        elif game_mode == 'RANDOM':
+            random_turn(c_choice, h_choice)  # Random makes a move
+            
     # Game over message
     if wins(board, HUMAN):
         clean()
