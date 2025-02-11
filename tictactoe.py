@@ -35,7 +35,6 @@ def evaluate(state, depth):
         score = depth - 10
     else:
         score = 0
-
     return score
 
 
@@ -163,8 +162,9 @@ def minimax(state, moves_left, player, alpha=-infinity, beta=+infinity, depth = 
         if alpha >= beta:
             break
 
+    #print(state)
+    #print(best)
     return best
-
 
 def clean():
     """
@@ -210,7 +210,7 @@ def ai_turn(c_choice, h_choice):
     if is_game_over(board, moves_left):
         return
 
-    clean()
+    #clean()
     print(f'Computer turn [{c_choice}]')
     render(board, c_choice, h_choice)
 
@@ -244,7 +244,7 @@ def human_turn(c_choice, h_choice):
         7: [2, 0], 8: [2, 1], 9: [2, 2],
     }
 
-    clean()
+    #clean()
     print(f'Human turn [{h_choice}]')
     render(board, c_choice, h_choice)
 
@@ -343,19 +343,22 @@ def main():
         elif game_mode == 'RANDOM':
             random_turn(c_choice, h_choice)  # Random makes a move
             
+        ai_turn(c_choice, h_choice)
+        #random_turn(c_choice, h_choice)
+
     # Game over message
     if wins(board, HUMAN):
-        clean()
+        #clean()
         print(f'Human turn [{h_choice}]')
         render(board, c_choice, h_choice)
         print('YOU WIN!')
     elif wins(board, COMP):
-        clean()
+        #clean()
         print(f'Computer turn [{c_choice}]')
         render(board, c_choice, h_choice)
         print('YOU LOSE!')
     else:
-        clean()
+        #clean()
         render(board, c_choice, h_choice)
         print('DRAW!')
 
