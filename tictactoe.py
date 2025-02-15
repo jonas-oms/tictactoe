@@ -208,7 +208,7 @@ def ai_turn(c_choice, h_choice):
     if is_game_over(board, moves_left):
         return
 
-    #clean()
+    clean()
     print(f'Computer turn [{c_choice}]')
     render(board, c_choice, h_choice)
 
@@ -242,7 +242,7 @@ def human_turn(c_choice, h_choice):
         7: [2, 0], 8: [2, 1], 9: [2, 2],
     }
 
-    #clean()
+    clean()
     print(f'Human turn [{h_choice}]')
     render(board, c_choice, h_choice)
 
@@ -343,17 +343,17 @@ def main():
             
     # Game over message
     if wins(board, HUMAN):
-        #clean()
+        clean()
         print(f'Human turn [{h_choice}]')
         render(board, c_choice, h_choice)
         print('YOU WIN!')
     elif wins(board, COMP):
-        #clean()
+        clean()
         print(f'Computer turn [{c_choice}]')
         render(board, c_choice, h_choice)
         print('YOU LOSE!')
     else:
-        #clean()
+        clean()
         render(board, c_choice, h_choice)
         print('DRAW!')
 
