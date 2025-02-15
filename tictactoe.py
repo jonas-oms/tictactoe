@@ -343,7 +343,7 @@ def main():
         elif game_mode == 'RANDOM':
             random_turn(c_choice, h_choice)  # Random makes a move
             
-        ai_turn(c_choice, h_choice)
+        #ai_turn(c_choice, h_choice)
         #random_turn(c_choice, h_choice)
 
     # Game over message
