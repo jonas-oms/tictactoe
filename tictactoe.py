@@ -7,10 +7,9 @@ from os import system
 """
 An implementation of Minimax AI Algorithm in Tic Tac Toe,
 using Python.
-This software is available under GPL license.
-Author: Clederson Cruz
-Year: 2017
-License: GNU GENERAL PUBLIC LICENSE (GPL)
+Author: Sarah Eichholz, Jonas Ohmaescher
+based on Code from Clederson Cruz, 2017
+Year: 2025
 """
 
 HUMAN = -1
@@ -26,10 +25,11 @@ def evaluate(state, depth):
     """
     Function to heuristic evaluation of state.
     :param state: the state of the current board
-    :return: +1 if the computer wins; -1 if the human wins; 0 draw
+    :return: +10 - depth if the computer wins; depth -10 if the human wins; 
+    0 draw
     """
     if wins(state, COMP):
-        score = +10 - depth
+        score = + 10 - depth
     elif wins(state, HUMAN):
         score = depth - 10
     else:
@@ -162,8 +162,6 @@ def minimax(state, moves_left, player, alpha=-infinity, beta=+infinity, depth = 
         if alpha >= beta:
             break
 
-    #print(state)
-    #print(best)
     return best
 
 def clean():
@@ -343,9 +341,6 @@ def main():
         elif game_mode == 'RANDOM':
             random_turn(c_choice, h_choice)  # Random makes a move
             
-        #ai_turn(c_choice, h_choice)
-        #random_turn(c_choice, h_choice)
-
     # Game over message
     if wins(board, HUMAN):
         #clean()
