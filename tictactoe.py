@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 from math import inf as infinity
 from random import choice
 import platform
@@ -134,14 +133,15 @@ def minimax(state, moves_left, player, alpha=-infinity, beta=+infinity, depth = 
     :return: a list with [the best row, best col, best score]
     """
     depth += 1
-    if player == COMP:
-        best = [-1, -1, -infinity]
-    else:
-        best = [-1, -1, +infinity]
 
     if is_game_over(board, moves_left):
         score = evaluate(state, depth)
         return [-1, -1, score]
+    
+    if player == COMP:
+        best = [-1, -1, -infinity]
+    else:
+        best = [-1, -1, +infinity]
 
     for cell in empty_cells(state):
         x, y = cell[0], cell[1]
